@@ -1,12 +1,10 @@
-#pragma once
-
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <queue>
 #include <condition_variable>
 
-#include "BoundedBufferQueue.h";
+#include "BoundedBufferQueue.h"
 
 using namespace std;
 
