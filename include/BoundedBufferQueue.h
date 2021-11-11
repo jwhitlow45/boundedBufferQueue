@@ -10,11 +10,14 @@ using namespace std;
 class BoundedBufferQueue
 {
 private:
-    mutex mtx;
+    int maxQSize;
     queue<int> q;
+    mutex mtx;
     condition_variable itemAdded;
     condition_variable itemRemoved;
+
 public:
+    BoundedBufferQueue(int qsize) { maxQSize = qsize; }
     void insert(int val);
     int remove();
     void printQueue();

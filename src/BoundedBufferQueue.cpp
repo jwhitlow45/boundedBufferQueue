@@ -10,12 +10,25 @@ using namespace std;
 
 void BoundedBufferQueue::insert(int val)
 {
-    return;
+    unique_lock<mutex> lk(mtx);
+    while (q.size() >= maxQSize)
+        itemRemoved.wait(lk);
+    q.push(val);
+    itemAdded.notify_one();
+    lk.release();    
 }
 
 int BoundedBufferQueue::remove()
 {
-    return 0;
+    int val;
+    unique_lock<mutex> lk(mtx);
+    while (q.empty())
+        itemAdded.wait(lk);
+    val = q.front();
+    q.pop();
+    itemRemoved.notify_one();
+    lk.release();
+    return val;
 }
 
 void BoundedBufferQueue::printQueue()
