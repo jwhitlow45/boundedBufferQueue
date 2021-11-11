@@ -13,6 +13,10 @@
 
 using namespace std;
 
+//function prototypes
+void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
+void consumer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
+
 int main(int argc, char *argv[])
 {
     //seed rng
@@ -27,10 +31,32 @@ int main(int argc, char *argv[])
     //default queue size to 25
     maxQueueSize = maxQueueSize == -1 ? 25 : maxQueueSize;
 
-    BoundedBufferQueue myBBQ(maxQueueSize);
+    BoundedBufferQueue *myBBQ = new BoundedBufferQueue(maxQueueSize);
 
-
-
+    //create producers and consumers (0-9 are produvers, 10-19 are consumers)
+    vector<thread> producers;
+    vector<thread> consumers;
 
     return 0;
+}
+
+void consumer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
+{
+    while (true)
+    {
+        int sleepTime = rand() % *sleepRange;
+        int item = BBQ->remove();
+        cout << "Item #" << item << " consumed by thread #" << threadNum << endl;
+    }
+}
+
+void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
+{
+    while (true)
+    {
+        int sleepTime = rand() % *sleepRange;
+        int item = rand()%1000000;
+        BBQ->insert(item);
+        cout << "Item #" << item << " produced by thread #" << threadNum << endl;
+    }
 }
