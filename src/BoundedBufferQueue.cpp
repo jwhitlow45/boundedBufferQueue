@@ -20,10 +20,6 @@ int BoundedBufferQueue::remove()
 
 void BoundedBufferQueue::printQueue()
 {
-    q.push(12);
-    q.push(-10);
-    q.push(5);
-    q.push(2);
     queue<int> pq = q;
     while (!(q.empty()))
     {
