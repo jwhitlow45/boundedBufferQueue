@@ -1,11 +1,7 @@
-#pragma once
-
 #include <thread>
 #include <mutex>
 #include <queue>
 #include <condition_variable>
-
-#include "BoundedBufferQueue.cpp"
 
 using namespace std;
 
@@ -17,7 +13,7 @@ private:
     condition_variable itemAdded;
     condition_variable itemRemoved;
 public:
-    BoundedBufferQueue();
     void insert(int val);
     int remove();
+    void printQueue();
 };
