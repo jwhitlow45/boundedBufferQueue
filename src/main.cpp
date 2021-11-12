@@ -56,10 +56,13 @@ void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
 {
     while (true)
     {
-        //slow down produving if queue is over 75% full
+        //slow down producing if queue is near full
+        //speed up producing if queue is near empty
         int sleepModifier = 1;
         if (BBQ->getQueueCapacity() > slowdownThreshold)
             sleepModifier = 1.0 + (BBQ->getQueueCapacity() - slowdownThreshold) / (1.0 - slowdownThreshold);
+        else if (BBQ->getQueueCapacity() < (1 - slowdownThreshold))
+            sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
         int sleepTime = rand() % (*sleepRange * sleepModifier);
         int item = rand() % 1000000;
         BBQ->insert(item);
