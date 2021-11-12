@@ -20,6 +20,8 @@ void consumer(BoundedBufferQueue *BBQ, int threadNum, int sleepRange);
 
 const float slowdownThreshold = 0.75;
 const int threadPairs = 10;
+int currentItemID = 0;
+
 
 int main(int argc, char *argv[])
 {
@@ -66,9 +68,9 @@ void producer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
             sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
         int sleepTime = (rand() % sleepRange) * sleepModifier;
         this_thread::sleep_for(chrono::milliseconds(sleepTime));
-        int item = rand() % 1000000;
-        BBQ->insert(item, &threadNumber);
-        cout << "Item #" << item << " produced by thread #" << threadNumber << endl;
+        BBQ->insert(currentItemID, &threadNumber);
+        currentItemID++;
+        cout << "Item #" << currentItemID << " produced by thread #" << threadNumber << endl;
     }
 }
 
