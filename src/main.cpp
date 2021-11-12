@@ -17,6 +17,8 @@ using namespace std;
 void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
 void consumer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
 
+const float slowdownThreshold = 0.75;
+
 int main(int argc, char *argv[])
 {
     //seed rng
@@ -54,8 +56,12 @@ void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
 {
     while (true)
     {
-        int sleepTime = rand() % *sleepRange;
-        int item = rand()%1000000;
+        //slow down produving if queue is over 75% full
+        int sleepModifier = 1;
+        if (BBQ->getQueueCapacity() > slowdownThreshold)
+            sleepModifier = 1.0 + (BBQ->getQueueCapacity() - slowdownThreshold) / (1.0 - slowdownThreshold);
+        int sleepTime = rand() % (*sleepRange * sleepModifier);
+        int item = rand() % 1000000;
         BBQ->insert(item);
         cout << "Item #" << item << " produced by thread #" << threadNum << endl;
     }
