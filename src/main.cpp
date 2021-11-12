@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 
 //local imports
 #include "utils.cpp"
@@ -47,8 +48,7 @@ int main(int argc, char *argv[])
 
     //wait for threads to complete
     //this will never happen but is a low cost way to impose an infinite wait
-    auto &th = producers[0];
-    th.join();
+    while (true);
 
     return 0;
 }
@@ -64,7 +64,8 @@ void producer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
             sleepModifier = 1.0 + (BBQ->getQueueCapacity() - slowdownThreshold) / (1.0 - slowdownThreshold);
         else if (BBQ->getQueueCapacity() < (1 - slowdownThreshold))
             sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
-        int sleepTime = rand() % int(sleepRange * sleepModifier);
+        int sleepTime = (rand() % sleepRange) * sleepModifier;
+        this_thread::sleep_for(chrono::milliseconds(sleepTime));
         int item = rand() % 1000000;
         BBQ->insert(item, &threadNumber);
         cout << "Item #" << item << " produced by thread #" << threadNumber << endl;
@@ -76,6 +77,7 @@ void consumer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
     while (true)
     {
         int sleepTime = rand() % sleepRange;
+        this_thread::sleep_for(chrono::milliseconds(sleepTime));
         int item = BBQ->remove(&threadNumber);
         cout << "Item #" << item << " consumed by thread #" << threadNumber << endl;
     }

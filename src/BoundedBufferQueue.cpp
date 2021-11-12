@@ -18,7 +18,7 @@ void BoundedBufferQueue::insert(int val, int *threadNumber)
     }
     q.push(val);
     itemAdded.notify_one();
-    lk.release();
+    lk.unlock();
 }
 
 int BoundedBufferQueue::remove(int *threadNumber)
@@ -33,7 +33,7 @@ int BoundedBufferQueue::remove(int *threadNumber)
     val = q.front();
     q.pop();
     itemRemoved.notify_one();
-    lk.release();
+    lk.unlock();
     return val;
 }
 
