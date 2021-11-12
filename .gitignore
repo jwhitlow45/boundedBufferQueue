@@ -39,5 +39,7 @@
 *.out
 *.app
 
-# Text files
+# Benchmarks
+benchmarks
 *.txt
+*.py
