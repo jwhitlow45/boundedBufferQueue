@@ -14,10 +14,11 @@
 using namespace std;
 
 //function prototypes
-void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
-void consumer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange);
+void producer(BoundedBufferQueue *BBQ, int threadNum, int *sleepRange);
+void consumer(BoundedBufferQueue *BBQ, int threadNum, int *sleepRange);
 
 const float slowdownThreshold = 0.75;
+const int threadPairs = 10;
 
 int main(int argc, char *argv[])
 {
@@ -38,21 +39,17 @@ int main(int argc, char *argv[])
     //create producers and consumers (0-9 are produvers, 10-19 are consumers)
     vector<thread> producers;
     vector<thread> consumers;
+    for (size_t i = 0; i < threadPairs; i++)
+    {
+        producers.push_back(thread(ref(producer), i, &tpSleep));
+        consumers.push_back(thread(ref(consumer), i + threadPairs, &tcSleep));
+    }
+    while (true);
 
     return 0;
 }
 
-void consumer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
-{
-    while (true)
-    {
-        int sleepTime = rand() % *sleepRange;
-        int item = BBQ->remove();
-        cout << "Item #" << item << " consumed by thread #" << threadNum << endl;
-    }
-}
-
-void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
+void producer(BoundedBufferQueue *BBQ, int threadNumber, int *sleepRange)
 {
     while (true)
     {
@@ -65,7 +62,17 @@ void producer(BoundedBufferQueue *BBQ, int *threadNum, int *sleepRange)
             sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
         int sleepTime = rand() % (*sleepRange * sleepModifier);
         int item = rand() % 1000000;
-        BBQ->insert(item);
-        cout << "Item #" << item << " produced by thread #" << threadNum << endl;
+        BBQ->insert(item, &threadNumber);
+        cout << "Item #" << item << " produced by thread #" << threadNumber << endl;
+    }
+}
+
+void consumer(BoundedBufferQueue *BBQ, int threadNumber, int *sleepRange)
+{
+    while (true)
+    {
+        int sleepTime = rand() % *sleepRange;
+        int item = BBQ->remove(&threadNumber);
+        cout << "Item #" << item << " consumed by thread #" << threadNumber << endl;
     }
 }

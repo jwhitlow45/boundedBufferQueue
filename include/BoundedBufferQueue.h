@@ -20,8 +20,8 @@ public:
     BoundedBufferQueue(int qsize) { maxQSize = qsize; }
     int getQueueSize() { return q.size(); }
     int getMaxQueueSize() { return maxQSize; }
-    void insert(int val);
-    int remove();
+    void insert(int val, int* threadNumber);
+    int remove(int* threadNumber);
     float getQueueCapacity() { return float(getQueueSize() / getMaxQueueSize()); }
     void printQueue();
 };

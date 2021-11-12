@@ -8,22 +8,28 @@
 
 using namespace std;
 
-void BoundedBufferQueue::insert(int val)
+void BoundedBufferQueue::insert(int val, int *threadNumber)
 {
     unique_lock<mutex> lk(mtx);
     while (q.size() >= maxQSize)
+    {
+        cout << "Waiting to produce by thread number #" << *threadNumber << endl;
         itemRemoved.wait(lk);
+    }
     q.push(val);
     itemAdded.notify_one();
-    lk.release();    
+    lk.release();
 }
 
-int BoundedBufferQueue::remove()
+int BoundedBufferQueue::remove(int *threadNumber)
 {
     int val;
     unique_lock<mutex> lk(mtx);
     while (q.empty())
+    {
+        cout << "Waiting to consume by thread number #" << *threadNumber << endl;
         itemAdded.wait(lk);
+    }
     val = q.front();
     q.pop();
     itemRemoved.notify_one();
