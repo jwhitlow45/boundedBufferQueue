@@ -14,8 +14,8 @@
 using namespace std;
 
 //function prototypes
-void producer(BoundedBufferQueue *BBQ, int threadNum, int *sleepRange);
-void consumer(BoundedBufferQueue *BBQ, int threadNum, int *sleepRange);
+void producer(BoundedBufferQueue *BBQ, int threadNum, int sleepRange);
+void consumer(BoundedBufferQueue *BBQ, int threadNum, int sleepRange);
 
 const float slowdownThreshold = 0.75;
 const int threadPairs = 10;
@@ -41,15 +41,19 @@ int main(int argc, char *argv[])
     vector<thread> consumers;
     for (size_t i = 0; i < threadPairs; i++)
     {
-        producers.push_back(thread(ref(producer), i, &tpSleep));
-        consumers.push_back(thread(ref(consumer), i + threadPairs, &tcSleep));
+        producers.push_back(thread(producer, myBBQ, i, tpSleep));
+        consumers.push_back(thread(consumer, myBBQ, i + threadPairs, tcSleep));
     }
-    while (true);
+
+    //wait for threads to complete
+    //this will never happen but is a low cost way to impose an infinite wait
+    auto &th = producers[0];
+    th.join();
 
     return 0;
 }
 
-void producer(BoundedBufferQueue *BBQ, int threadNumber, int *sleepRange)
+void producer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
 {
     while (true)
     {
@@ -60,18 +64,18 @@ void producer(BoundedBufferQueue *BBQ, int threadNumber, int *sleepRange)
             sleepModifier = 1.0 + (BBQ->getQueueCapacity() - slowdownThreshold) / (1.0 - slowdownThreshold);
         else if (BBQ->getQueueCapacity() < (1 - slowdownThreshold))
             sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
-        int sleepTime = rand() % (*sleepRange * sleepModifier);
+        int sleepTime = rand() % int(sleepRange * sleepModifier);
         int item = rand() % 1000000;
         BBQ->insert(item, &threadNumber);
         cout << "Item #" << item << " produced by thread #" << threadNumber << endl;
     }
 }
 
-void consumer(BoundedBufferQueue *BBQ, int threadNumber, int *sleepRange)
+void consumer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
 {
     while (true)
     {
-        int sleepTime = rand() % *sleepRange;
+        int sleepTime = rand() % sleepRange;
         int item = BBQ->remove(&threadNumber);
         cout << "Item #" << item << " consumed by thread #" << threadNumber << endl;
     }
