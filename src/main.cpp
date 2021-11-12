@@ -20,8 +20,10 @@ void consumer(BoundedBufferQueue *BBQ, int threadNum, int sleepRange);
 
 const float slowdownThreshold = 0.75;
 const int threadPairs = 10;
-int currentItemID = 0;
-
+int itemsProduced = 0;
+int itemsConsumed = 0;
+int producersHalted = 0;
+int consumersHalted = 0;
 
 int main(int argc, char *argv[])
 {
@@ -50,7 +52,11 @@ int main(int argc, char *argv[])
 
     //wait for threads to complete
     //this will never happen but is a low cost way to impose an infinite wait
-    while (true);
+    this_thread::sleep_for(chrono::seconds(10));
+    cout << "Items produced: " << itemsProduced << endl;
+    cout << "Items consumed: " << itemsConsumed << endl;
+    cout << "Number of halted producers: " << producersHalted << endl;
+    cout << "Number of halted consumers: " << consumersHalted << endl;
 
     return 0;
 }
@@ -68,9 +74,9 @@ void producer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
             sleepModifier = BBQ->getQueueCapacity() / (1 - slowdownThreshold);
         int sleepTime = (rand() % sleepRange) * sleepModifier;
         this_thread::sleep_for(chrono::milliseconds(sleepTime));
-        BBQ->insert(currentItemID, &threadNumber);
-        currentItemID++;
-        cout << "Item #" << currentItemID << " produced by thread #" << threadNumber << endl;
+        BBQ->insert(itemsProduced, &threadNumber, &producersHalted);
+        itemsProduced++;
+        cout << "Item #" << itemsProduced << " produced by thread #" << threadNumber << endl;
     }
 }
 
@@ -80,7 +86,8 @@ void consumer(BoundedBufferQueue *BBQ, int threadNumber, int sleepRange)
     {
         int sleepTime = rand() % sleepRange;
         this_thread::sleep_for(chrono::milliseconds(sleepTime));
-        int item = BBQ->remove(&threadNumber);
+        int item = BBQ->remove(&threadNumber, &consumersHalted);
+        itemsConsumed++;
         cout << "Item #" << item << " consumed by thread #" << threadNumber << endl;
     }
 }
