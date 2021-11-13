@@ -43,4 +43,4 @@ As sleep range differential is calculated by producer sleep range - consumer sle
 By increasing the size of the bounded buffer queue, the rate at which halts occur is meaningfully reduced. At a queue size of 25, the average halt rate of producers and consumers is 40.21% and 3.54% respectively. When the queue size is increased to 50, the average halt rate of producers and consumers decreases to 38.38% and 1.13%, and at a queue size of 100 they decrease even further to 35.71% and 0.28%. This trend can also be seen on all figures as the halt rates shrink at the left side when comparing Figures 1, 2, and 3, and right end when comparing Figures 4, 5, and 6. This is also a logical conclusion to come to, as the greater queue size allows for more “room” for the queue to grow and shrink, leading to less producer and consumer halts.
 
 ### Figures
-<img src="https://imgur.com/cF3z6nS">
+<img src="https://raw.githubusercontent.com/jwhitlow45/boundedBufferQueue/main/media/graphs/Consumer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%20100).png?token=ALGNT733ONYEYLJCDSA2YS3BSALCI">
