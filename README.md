@@ -1,5 +1,11 @@
 # Description
 
+Using multithreading, condition variables, and lock statements, the above program creates a bounded buffer queue. The size of this queue is provided by the user through the command to run the program. This bounded buffer queue is manipulated by two different types of threads: consumers and producers. Consumers remove items from the queue while producers add items to the queue. At the start of the program 10 producer threads and 10 consumer threads are created. Consumers will only remove items from the queue if the queue is not empty while producers will only add items to the queue if the queue is not full. To prevent two items from being inserted/removed at the same time, a mutex is used. In the event a given thread X tries to insert/remove when thread Y has the a lock on the mutex, thread X will wait until the lock is released by thread Y.
+
+Before every produce/consume operation, a thread will generate its own random wait time from 0 to T, where T is a sleep range provided by the user. Two sleep ranges are provided by the user through the command to run the program: one for producers and one for consumers. The consumer thread sleep range remains constant for the duration of the program, however the producer sleep range is dynamic. If the queue capacity is less than 25%, the producers are sped up by gradually reducing their sleep range as capcity approaches 0%, down to half the intial sleep range (2x speed). The opposite is done when capcity exceeds 75%, slowing down producers by gradually increasing their sleep range as capacity approaches 100%, up to double the initial sleep range (1/2x speed).
+
+Benchmarks were performed on this program which measured the number of items produced and consumed, as well as the number of times a producer/consumer had to halt due to the queue being full/empty (referred to as a producer halt or a consumer halt). The results and analysis of these benchmarks can be found below in the Data Analysis section. 
+
 # Demonstration
 
 Here is a [demonstration video](https://gfycat.com/likelyenragedauk.gif) of the project running.
@@ -32,7 +38,7 @@ Of the following graphs, 3 show the producer halt rate (`producer halts / item p
 
 ### Preference for Producer Threads
 
-During testing, it became obvious that the thread scheduler for Ubuntu 21.10 was giving preference to the producer threads over the consumer threads. Across all queue sizes, sleep range differentials of 0 (equivalent sleep ranges) led to producer halt rates anywhere from 12% to 25% and consumer halt rates of 0%. This preference for producers becomes even more apparent when looking at Figures 4-6. The consumer halt rate does not rise above 0% until the producer sleep range is 100 ms greater than the consumer sleep range. This initially appeared to be because the first generated thread was a producer (threads are created in an alternating pattern of producer then consumer), however rerunning the tests with consumers as the first threads in the pattern did not show any statistically significant difference in results.
+During testing, it became obvious that the thread scheduler for Linux was giving preference to the producer threads over the consumer threads. Across all queue sizes, sleep range differentials of 0 (equivalent sleep ranges) led to producer halt rates anywhere from 12% to 25% and consumer halt rates of 0%. This preference for producers becomes even more apparent when looking at Figures 4-6. The consumer halt rate does not rise above 0% until the producer sleep range is 100 ms greater than the consumer sleep range. This initially appeared to be because the first generated thread was a producer (threads are created in an alternating pattern of producer then consumer), however rerunning the tests with consumers as the first threads in the pattern did not show any statistically significant difference in results.
 
 ### Producer/Consumer Halt Rate Increases with more negative/positive Sleep Range Differential
 
