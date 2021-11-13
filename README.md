@@ -2,7 +2,7 @@
 
 # Demonstration
 
-<img src="https://gfycat.com/likelyenragedauk.gif">
+Here is a [demonstration video](https://gfycat.com/likelyenragedauk.gif) of the project running.
 
 # Build and Run
 
