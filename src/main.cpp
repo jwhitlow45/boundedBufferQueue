@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
 
     //wait for threads to complete
     //this will never happen but is a low cost way to impose an infinite wait
+    while (true)
+        ;
     this_thread::sleep_for(chrono::seconds(10));
     cout << "Items produced: " << itemsProduced << endl;
     cout << "Items consumed: " << itemsConsumed << endl;
