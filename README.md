@@ -22,7 +22,7 @@ g++ src/main.cpp src/BoundedBufferQueue.cpp -o src/main -I include/ && ./src/mai
 
 # Testing Methodology
 
-The following data was gathered using a python script to build and run the bounded buffer queue program with g++11. Results were stored in a .csv file, using different parameters for producer sleep range, consumer sleep range, and queue size, and then imported to Google Sheets for interpretation and graphing. The producer/consumer sleep ranges tested were 25, 50, 100, 250, and 1000 ms while queue sizes were 25, 50, and 100. Every combination of these parameters were tested for a total of 75 tests ran over roughly 15 minutes. These tests were run on a Surface Pro 6 with an i5-8250U (4 core/8 thread @ 3.4 GHz) and 8 GB of RAM running Ubuntu 21.10. During these tests the only open application was VSCode and no user was interacting with the machine.
+The following data was gathered using a [python script](https://github.com/jwhitlow45/boundedBufferQueue/blob/main/benchmarks.py) to build and run the bounded buffer queue program with g++11. Results were stored in a .csv file, using different parameters for producer sleep range, consumer sleep range, and queue size, and then imported to Google Sheets for interpretation and graphing. The producer/consumer sleep ranges tested were 25, 50, 100, 250, and 1000 ms while queue sizes were 25, 50, and 100. Every combination of these parameters were tested for a total of 75 tests ran over roughly 15 minutes. These tests were run on a Surface Pro 6 with an i5-8250U (4 core/8 thread @ 3.4 GHz) and 8 GB of RAM running Ubuntu 21.10. During these tests the only open application was VSCode and no user was interacting with the machine.
 
 # Data Analysis
 
@@ -43,4 +43,11 @@ As sleep range differential is calculated by producer sleep range - consumer sle
 By increasing the size of the bounded buffer queue, the rate at which halts occur is meaningfully reduced. At a queue size of 25, the average halt rate of producers and consumers is 40.21% and 3.54% respectively. When the queue size is increased to 50, the average halt rate of producers and consumers decreases to 38.38% and 1.13%, and at a queue size of 100 they decrease even further to 35.71% and 0.28%. This trend can also be seen on all figures as the halt rates shrink at the left side when comparing Figures 1, 2, and 3, and right end when comparing Figures 4, 5, and 6. This is also a logical conclusion to come to, as the greater queue size allows for more “room” for the queue to grow and shrink, leading to less producer and consumer halts.
 
 ### Figures
-<img src="https://imgur.com/cF3z6nS">
+<div align="center" display="flex">
+  <img title="Figure 1" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Producer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%2025).png">
+  <img title="Figure 2" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Producer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%2050).png">
+  <img title="Figure 3" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Producer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%20100).png">
+  <img title="Figure 4" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Consumer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%2025).png">
+  <img title="Figure 5" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Consumer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%2050).png">
+  <img title="Figure 6" width="300px" src="https://github.com/jwhitlow45/boundedBufferQueue/blob/main/media/graphs/Consumer%20Halt%20Rate%20vs.%20Sleep%20Range%20Differential%20(Queue%20Size%20100).png">
+</div>
